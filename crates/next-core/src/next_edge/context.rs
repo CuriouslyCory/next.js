@@ -255,7 +255,9 @@ pub async fn get_edge_chunking_context_with_client_assets(
     .module_id_strategy(module_id_strategy.to_resolved().await?)
     .export_usage(*export_usage.await?);
 
-    if !next_mode.is_development() {
+    if next_mode.is_development() {
+        builder = builder.use_annotated_stack_traces();
+    } else {
         builder = builder
             .chunking_config(
                 Vc::<EcmascriptChunkType>::default().to_resolved().await?,
@@ -326,7 +328,9 @@ pub async fn get_edge_chunking_context(
     .module_id_strategy(module_id_strategy.to_resolved().await?)
     .export_usage(*export_usage.await?);
 
-    if !next_mode.is_development() {
+    if next_mode.is_development() {
+        builder = builder.use_annotated_stack_traces();
+    } else {
         builder = builder
             .chunking_config(
                 Vc::<EcmascriptChunkType>::default().to_resolved().await?,

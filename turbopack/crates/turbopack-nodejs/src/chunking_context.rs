@@ -89,6 +89,11 @@ impl NodeJsChunkingContextBuilder {
         self
     }
 
+    pub fn use_annotated_stack_traces(mut self) -> Self {
+        self.chunking_context.should_use_annotated_stack_traces = true;
+        self
+    }
+
     pub fn module_id_strategy(
         mut self,
         module_id_strategy: ResolvedVc<Box<dyn ModuleIdStrategy>>,
@@ -160,6 +165,8 @@ pub struct NodeJsChunkingContext {
     should_use_file_source_map_uris: bool,
     /// The chunking configs
     chunking_configs: Vec<(ResolvedVc<Box<dyn ChunkType>>, ChunkingConfig)>,
+    /// Whether to give generated functions better names for stack traces
+    should_use_annotated_stack_traces: bool,
 }
 
 impl NodeJsChunkingContext {
@@ -192,6 +199,7 @@ impl NodeJsChunkingContext {
                 source_maps_type: SourceMapsType::Full,
                 manifest_chunks: false,
                 should_use_file_source_map_uris: false,
+                should_use_annotated_stack_traces: false,
                 module_id_strategy: ResolvedVc::upcast(DevModuleIdStrategy::new_resolved()),
                 export_usage: None,
                 chunking_configs: Default::default(),
@@ -352,6 +360,11 @@ impl ChunkingContext for NodeJsChunkingContext {
     #[turbo_tasks::function]
     fn chunking_configs(&self) -> Result<Vc<ChunkingConfigs>> {
         Ok(Vc::cell(self.chunking_configs.iter().cloned().collect()))
+    }
+
+    #[turbo_tasks::function]
+    fn should_use_annotated_stack_traces(&self) -> Vc<bool> {
+        Vc::cell(self.should_use_annotated_stack_traces)
     }
 
     #[turbo_tasks::function]

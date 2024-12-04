@@ -458,6 +458,7 @@ pub async fn get_client_chunking_context(
         builder = builder
             .hot_module_replacement()
             .use_file_source_map_uris()
+            .use_annotated_stack_traces()
             .dynamic_chunk_content_loading(true);
     } else {
         builder = builder

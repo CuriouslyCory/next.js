@@ -234,6 +234,12 @@ pub trait ChunkingContext {
         MinifyType::NoMinify.cell()
     }
 
+    /// Whether to give generated functions better names for stack traces
+    #[turbo_tasks::function]
+    fn should_use_annotated_stack_traces(self: Vc<Self>) -> Vc<bool> {
+        Vc::cell(false)
+    }
+
     #[turbo_tasks::function]
     fn async_loader_chunk_item(
         &self,
