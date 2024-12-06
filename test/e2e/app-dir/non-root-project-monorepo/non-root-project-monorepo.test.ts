@@ -89,8 +89,7 @@ describe('non-root-project-monorepo', () => {
         if (isTurbopack) {
           // TODO the function name should be hidden
           expect(await getRedboxSource(browser)).toMatchInlineSnapshot(`
-           "app/separate-file.ts (1:7) @ Object.
-           {module evaluation}
+           "app/separate-file.ts (1:7)
 
            > 1 | throw new Error('Expected error')
                |       ^
@@ -135,8 +134,7 @@ describe('non-root-project-monorepo', () => {
         if (isTurbopack) {
           // TODO the function name should be hidden
           expect(await getRedboxSource(browser)).toMatchInlineSnapshot(`
-           "app/separate-file.ts (1:7) @
-           {module evaluation}
+           "app/separate-file.ts (1:7)
 
            > 1 | throw new Error('Expected error')
                |       ^
@@ -153,7 +151,7 @@ describe('non-root-project-monorepo', () => {
         } else {
           // TODO the function name should be hidden
           expect(await getRedboxSource(browser)).toMatchInlineSnapshot(`
-            "app/separate-file.ts (1:7) @ eval
+            "app/separate-file.ts (1:7)
 
             > 1 | throw new Error('Expected error')
                 |       ^
@@ -180,8 +178,7 @@ describe('non-root-project-monorepo', () => {
         if (isTurbopack) {
           // TODO the function name should be hidden
           expect(await getRedboxSource(browser)).toMatchInlineSnapshot(`
-           "app/separate-file.ts (1:7) @
-           {module evaluation}
+           "app/separate-file.ts (1:7)
 
            > 1 | throw new Error('Expected error')
                |       ^
@@ -198,7 +195,7 @@ describe('non-root-project-monorepo', () => {
         } else {
           // TODO the function name should be hidden
           expect(await getRedboxSource(browser)).toMatchInlineSnapshot(`
-            "app/separate-file.ts (1:7) @ eval
+            "app/separate-file.ts (1:7)
 
             > 1 | throw new Error('Expected error')
                 |       ^

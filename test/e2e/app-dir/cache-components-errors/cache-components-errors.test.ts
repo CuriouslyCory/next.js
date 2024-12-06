@@ -2443,7 +2443,7 @@ describe('Cache Components Errors', () => {
                  "description": ""use cache: private" must not be used within \`unstable_cache()\`.",
                  "environmentLabel": null,
                  "label": "Runtime Error",
-                 "source": "app/use-cache-private-in-unstable-cache/page.tsx (21:38) @ eval
+                 "source": "app/use-cache-private-in-unstable-cache/page.tsx (21:38)
                > 21 | const getCachedData = unstable_cache(async () => {
                     |                                      ^",
                  "stack": [
@@ -2459,7 +2459,7 @@ describe('Cache Components Errors', () => {
                  "description": ""use cache: private" must not be used within \`unstable_cache()\`.",
                  "environmentLabel": null,
                  "label": "Runtime Error",
-                 "source": "app/use-cache-private-in-unstable-cache/page.tsx (21:38) @ eval
+                 "source": "app/use-cache-private-in-unstable-cache/page.tsx (21:38)
                > 21 | const getCachedData = unstable_cache(async () => {
                     |                                      ^",
                  "stack": [
@@ -2570,8 +2570,7 @@ describe('Cache Components Errors', () => {
                  "description": ""use cache: private" must not be used within "use cache". It can only be nested inside of another "use cache: private".",
                  "environmentLabel": null,
                  "label": "Runtime Error",
-                 "source": "app/use-cache-private-in-use-cache/page.tsx (15:1) @ Module.
-               {module evaluation}
+                 "source": "app/use-cache-private-in-use-cache/page.tsx (15:1)
                > 15 | async function Private() {
                     | ^",
                  "stack": [
@@ -2588,7 +2587,7 @@ describe('Cache Components Errors', () => {
                  "description": ""use cache: private" must not be used within "use cache". It can only be nested inside of another "use cache: private".",
                  "environmentLabel": null,
                  "label": "Runtime Error",
-                 "source": "app/use-cache-private-in-use-cache/page.tsx (15:1) @ eval
+                 "source": "app/use-cache-private-in-use-cache/page.tsx (15:1)
                > 15 | async function Private() {
                     | ^",
                  "stack": [
@@ -2604,7 +2603,7 @@ describe('Cache Components Errors', () => {
                  "description": ""use cache: private" must not be used within "use cache". It can only be nested inside of another "use cache: private".",
                  "environmentLabel": null,
                  "label": "Runtime Error",
-                 "source": "app/use-cache-private-in-use-cache/page.tsx (15:1) @ eval
+                 "source": "app/use-cache-private-in-use-cache/page.tsx (15:1)
                > 15 | async function Private() {
                     | ^",
                  "stack": [
