@@ -60,7 +60,7 @@ describe('use-cache-hanging-inputs', () => {
           `)
 
           expect(cliOutput).toContain(`Error: ${expectedTimeoutErrorMessage}
-    at [project]/app/search-params/page.tsx [app-rsc] (ecmascript)`)
+    at Module.__TURBOPACK__module__evaluation__`)
         } else {
           expect(errorSource).toMatchInlineSnapshot(`
            "app/search-params/page.tsx (3:16) @ eval
@@ -177,7 +177,7 @@ describe('use-cache-hanging-inputs', () => {
           `)
 
           expect(cliOutput).toContain(`Error: ${expectedTimeoutErrorMessage}
-    at [project]/app/uncached-promise/page.tsx [app-rsc] (ecmascript)`)
+    at Module.__TURBOPACK__module__evaluation__`)
         } else {
           expect(errorSource).toMatchInlineSnapshot(`
            "app/uncached-promise/page.tsx (10:13) @ eval
@@ -231,7 +231,7 @@ describe('use-cache-hanging-inputs', () => {
           `)
 
           expect(cliOutput).toContain(`Error: ${expectedTimeoutErrorMessage}
-    at [project]/app/uncached-promise-nested/page.tsx [app-rsc] (ecmascript)`)
+    at Module.__TURBOPACK__module__evaluation__`)
         } else {
           expect(errorSource).toMatchInlineSnapshot(`
            "app/uncached-promise-nested/page.tsx (16:1) @ eval
@@ -286,7 +286,7 @@ describe('use-cache-hanging-inputs', () => {
           `)
 
           expect(cliOutput).toContain(`Error: ${expectedTimeoutErrorMessage}
-    at [project]/app/bound-args/page.tsx [app-rsc] (ecmascript)`)
+    at Module.__TURBOPACK__module__evaluation__`)
         } else {
           expect(errorSource).toMatchInlineSnapshot(`
             "app/bound-args/page.tsx (13:15) @ eval
