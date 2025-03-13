@@ -571,7 +571,7 @@ describe('Error recovery app', () => {
            "description": "no 1",
            "environmentLabel": null,
            "label": "Runtime Error",
-           "source": "index.js (7:11) @ eval
+           "source": "index.js (7:11)
          > 7 |     throw Error('no ' + i)
              |           ^",
            "stack": [
@@ -585,7 +585,7 @@ describe('Error recovery app', () => {
          "description": "no 1",
          "environmentLabel": null,
          "label": "Runtime Error",
-         "source": "index.js (7:11) @ eval
+         "source": "index.js (7:11)
        >  7 |     throw Error('no ' + i)
             |           ^",
          "stack": [
