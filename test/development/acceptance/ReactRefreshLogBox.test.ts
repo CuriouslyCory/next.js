@@ -121,13 +121,14 @@ describe('ReactRefreshLogBox', () => {
            "description": "no",
            "environmentLabel": null,
            "label": "Runtime Error",
-           "source": "index.js (3:7) @ [project]/index.js [ssr] (ecmascript)
+           "source": "index.js (3:7) @ Module.
+         {module evaluation}
          > 3 | throw new Error('no')
              |       ^",
            "stack": [
-             "[project]/index.js [ssr] (ecmascript) index.js (3:7)",
-             "[project]/pages/index.js [ssr] (ecmascript) <module evaluation> pages/index.js (1:1)",
-             "[project]/pages/index.js [ssr] (ecmascript) pages/index.js (1:1)",
+             "Module. {module evaluation} index.js (3:7)",
+             "Module. {module evaluation} pages/index.js (1:1)",
+             "Module. {module evaluation} pages/index.js (1:1)",
              "<FIXME-next-dist-dir>",
            ],
          }
@@ -162,13 +163,14 @@ describe('ReactRefreshLogBox', () => {
            "description": "no",
            "environmentLabel": null,
            "label": "Runtime Error",
-           "source": "index.js (3:7) @ [project]/index.js [ssr] (ecmascript)
+           "source": "index.js (3:7) @ Module.
+         {module evaluation}
          > 3 | throw new Error('no')
              |       ^",
            "stack": [
-             "[project]/index.js [ssr] (ecmascript) index.js (3:7)",
-             "[project]/pages/index.js [ssr] (ecmascript) <module evaluation> pages/index.js (1:1)",
-             "[project]/pages/index.js [ssr] (ecmascript) pages/index.js (1:1)",
+             "Module. {module evaluation} index.js (3:7)",
+             "Module. {module evaluation} pages/index.js (1:1)",
+             "Module. {module evaluation} pages/index.js (1:1)",
              "<FIXME-next-dist-dir>",
            ],
          }
