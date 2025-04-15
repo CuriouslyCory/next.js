@@ -16,6 +16,7 @@ use turbopack_core::issue::{
 };
 
 use crate::{
+    mode::NextMode,
     next_app::{
         AppPage, AppPath, PageSegment, PageType,
         metadata::{
@@ -721,12 +722,14 @@ pub fn get_entrypoints(
     app_dir: FileSystemPath,
     page_extensions: Vc<Vec<RcStr>>,
     is_global_not_found_enabled: Vc<bool>,
+    next_mode: Vc<NextMode>,
 ) -> Vc<Entrypoints> {
     directory_tree_to_entrypoints(
         app_dir.clone(),
         get_directory_tree(app_dir.clone(), page_extensions),
         get_global_metadata(app_dir, page_extensions),
         is_global_not_found_enabled,
+        next_mode,
         Default::default(),
     )
 }
@@ -737,12 +740,14 @@ fn directory_tree_to_entrypoints(
     directory_tree: Vc<DirectoryTree>,
     global_metadata: Vc<GlobalMetadata>,
     is_global_not_found_enabled: Vc<bool>,
+    next_mode: Vc<NextMode>,
     root_layouts: Vc<FileSystemPathVec>,
 ) -> Vc<Entrypoints> {
     directory_tree_to_entrypoints_internal(
         app_dir,
         global_metadata,
         is_global_not_found_enabled,
+        next_mode,
         rcstr!(""),
         directory_tree,
         AppPage::new(),
@@ -1162,6 +1167,7 @@ async fn directory_tree_to_entrypoints_internal(
     app_dir: FileSystemPath,
     global_metadata: ResolvedVc<GlobalMetadata>,
     is_global_not_found_enabled: Vc<bool>,
+    next_mode: Vc<NextMode>,
     directory_name: RcStr,
     directory_tree: Vc<DirectoryTree>,
     app_page: AppPage,
@@ -1172,6 +1178,7 @@ async fn directory_tree_to_entrypoints_internal(
         app_dir,
         global_metadata,
         is_global_not_found_enabled,
+        next_mode,
         directory_name,
         directory_tree,
         app_page,
@@ -1185,6 +1192,7 @@ async fn directory_tree_to_entrypoints_internal_untraced(
     app_dir: FileSystemPath,
     global_metadata: ResolvedVc<GlobalMetadata>,
     is_global_not_found_enabled: Vc<bool>,
+    next_mode: Vc<NextMode>,
     directory_name: RcStr,
     directory_tree: Vc<DirectoryTree>,
     app_page: AppPage,
@@ -1394,11 +1402,48 @@ async fn directory_tree_to_entrypoints_internal_untraced(
             .resolved_cell();
 
         {
-            let app_page = app_page
+            let app_not_found_page = app_page
                 .clone_push_str("_not-found")?
                 .complete(PageType::Page)?;
 
-            add_app_page(app_dir.clone(), &mut result, app_page, not_found_tree);
+            add_app_page(
+                app_dir.clone(),
+                &mut result,
+                app_not_found_page,
+                not_found_tree,
+            );
+        }
+
+        if next_mode.await?.is_development() {
+            // Use built-in empty-error.js to create a `_error/page` route.
+            let error_tree = AppPageLoaderTree {
+                page: app_page.clone(),
+                segment: directory_name.clone(),
+                parallel_routes: fxindexmap! {
+                    "children".into() => AppPageLoaderTree {
+                        page: app_page.clone(),
+                        segment: "__PAGE__".into(),
+                        parallel_routes: FxIndexMap::default(),
+                        modules: AppDirModules {
+                            page: Some(get_next_package(app_dir.clone())
+                                .await?
+                                .join("dist/client/components/empty-error.js".into())?),
+                            ..Default::default()
+                        },
+                        global_metadata,
+                    }
+                },
+                modules: AppDirModules::default(),
+                global_metadata,
+            }
+            .resolved_cell();
+
+            {
+                let app_error_page = app_page
+                    .clone_push_str("_error")?
+                    .complete(PageType::Page)?;
+                add_app_page(app_dir.clone(), &mut result, app_error_page, error_tree);
+            }
         }
     }
 
@@ -1424,6 +1469,7 @@ async fn directory_tree_to_entrypoints_internal_untraced(
                     app_dir.clone(),
                     *global_metadata,
                     is_global_not_found_enabled,
+                    next_mode,
                     subdir_name.clone(),
                     *subdirectory,
                     child_app_page.clone(),
