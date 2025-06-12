@@ -731,5 +731,10 @@
   "730": "Dynamic imports should not be instrumented in the edge runtime, because `cacheComponents` doesn't support it",
   "731": "chainStreams requires at least one stream",
   "732": "dynamic responses cannot be unchunked. This is a bug in Next.js",
-  "733": "null responses cannot be unchunked"
+  "733": "null responses cannot be unchunked",
+  "734": "Route %s used %s inside \\`\"use cache\"\\` or \\`unstable_cache\\`. Support for this API inside cache scopes is planned for a future version of Next.js.",
+  "735": "%s must not be used within a client component. Next.js should be preventing it from being included in client components statically, but did not in this case.",
+  "736": "Route %s used %s in Pages Router. This API is only available within App Router.",
+  "737": "\\`unstable_rootParams\\` must not be used within a client component. Next.js should be preventing it from being included in client components statically, but did not in this case.",
+  "738": "Missing workStore in %s"
 }
