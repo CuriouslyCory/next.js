@@ -778,6 +778,11 @@ export interface ExperimentalConfig {
    * @default false
    */
   optimizeRouterScrolling?: boolean
+
+  /**
+   * Enable accessing root params via the `next/root-params` module.
+   */
+  rootParams?: boolean
 }
 
 export type ExportPathMap = {
