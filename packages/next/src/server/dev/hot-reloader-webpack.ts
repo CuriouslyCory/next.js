@@ -95,6 +95,7 @@ import {
   devToolsConfigMiddleware,
   getDevToolsConfig,
 } from '../../next-devtools/server/devtools-config-middleware'
+import type { AppPageStaticInfo } from '../../build/analysis/get-page-static-info'
 
 const MILLISECONDS_IN_NANOSECOND = BigInt(1_000_000)
 
@@ -980,6 +981,7 @@ export default class HotReloaderWebpack implements NextJsHotReloaderInterface {
                           entryData.absolutePagePath
                         ).replace(/\\/g, '/')
                       ),
+                      rootParams: (staticInfo as AppPageStaticInfo).rootParams!,
                       appDir: this.appDir!,
                       pageExtensions: this.config.pageExtensions,
                       rootDir: this.dir,
@@ -1103,6 +1105,7 @@ export default class HotReloaderWebpack implements NextJsHotReloaderInterface {
                     page,
                     appPaths: entryData.appPaths,
                     pagePath,
+                    rootParams: (staticInfo as AppPageStaticInfo).rootParams!,
                     appDir: this.appDir!,
                     pageExtensions: this.config.pageExtensions,
                     rootDir: this.dir,
