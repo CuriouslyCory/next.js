@@ -17,6 +17,9 @@ export interface RouteTypesManifest {
   redirectRoutes: Record<string, RouteInfo>
   /** Map of rewrite source => RouteInfo */
   rewriteRoutes: Record<string, RouteInfo>
+  appPaths: Set<string>
+  pagePaths: Set<string>
+  layoutPaths: Set<string>
 }
 
 // Convert a custom-route source string (`/blog/:slug`, `/docs/:path*`, ...)
@@ -118,6 +121,9 @@ export function createUnifiedRouteTypesManifest({
   layoutRoutes,
   redirects,
   rewrites,
+  appPaths,
+  pagePaths,
+  layoutPaths,
 }: {
   dir: string
   pageRoutes: Array<{ route: string; filePath: string }>
@@ -133,6 +139,10 @@ export function createUnifiedRouteTypesManifest({
     afterFiles: Array<{ source: string }>
     fallback: Array<{ source: string }>
   }
+  appPaths: Set<string>
+  pagePaths: Set<string>
+  layoutPaths: Set<string>
+  
 }): RouteTypesManifest {
   const manifest: RouteTypesManifest = {
     appRoutes: {},
@@ -140,6 +150,9 @@ export function createUnifiedRouteTypesManifest({
     layoutRoutes: {},
     redirectRoutes: {},
     rewriteRoutes: {},
+    appPaths,
+    pagePaths,
+    layoutPaths,
   }
 
   // Process page routes

@@ -87,13 +87,13 @@ import { normalizePath } from '../../../lib/normalize-path'
 import { JSON_CONTENT_TYPE_HEADER } from '../../../lib/constants'
 import { parseBody } from '../../api-utils/node/parse-body'
 import { timingSafeEqual } from 'crypto'
-import { generateRouteTypesFile } from './typegen'
 import {
   type RouteTypesManifest,
   extractSlotFromPageName,
   createLayoutFileRegex,
   createUnifiedRouteTypesManifest,
 } from './route-types-shared'
+import { generateRouteTypesFile, generateValidatorFile } from './typegen'
 
 export type SetupOpts = {
   renderServer: LazyRenderServerInstance
@@ -171,6 +171,9 @@ function createRouteTypesManifest({
   layoutSlots,
   redirects,
   rewrites,
+  allAppPagePaths,
+  allPagesPagePaths,
+  allAppLayoutPaths,
 }: {
   dir: string
   pagesPageFilePaths: Map<string, string>
@@ -183,6 +186,9 @@ function createRouteTypesManifest({
     afterFiles: Array<{ source: string }>
     fallback: Array<{ source: string }>
   }
+  allAppPagePaths: Set<string>
+  allPagesPagePaths: Set<string>
+  allAppLayoutPaths: Set<string>
 }): RouteTypesManifest {
   // Convert maps to arrays for the unified function
   const pageRoutes = Array.from(pagesPageFilePaths.entries()).map(
@@ -210,6 +216,9 @@ function createRouteTypesManifest({
     layoutRoutes,
     redirects,
     rewrites,
+    appPaths: allAppPagePaths,
+    pagePaths: allPagesPagePaths,
+    layoutPaths: allAppLayoutPaths,
   })
 }
 
@@ -305,11 +314,21 @@ async function startWatcher(
     layoutSlots: new Map(),
     redirects: opts.fsChecker.redirects,
     rewrites: opts.fsChecker.rewrites,
+    allAppPagePaths: new Set(),
+    allPagesPagePaths: new Set(),
+    allAppLayoutPaths: new Set(),
   })
 
   await fs.promises.writeFile(
     routeTypesFilePath,
     generateRouteTypesFile(routeTypesManifest)
+  )
+
+  // Generate validator file
+  const validatorFilePath = path.join(distDir, 'types', 'validator.ts')
+  await fs.promises.writeFile(
+    validatorFilePath,
+    generateValidatorFile(routeTypesManifest)
   )
 
   const prerenderManifestPath = path.join(distDir, PRERENDER_MANIFEST)
@@ -413,6 +432,11 @@ async function startWatcher(
       const pagesPageFilePaths = new Map<string, string>()
       const appLayoutFilePaths = new Map<string, string>()
       const layoutSlots = new Map<string, Set<string>>()
+
+      // Separate collections for ALL file paths (for validator.ts)
+      const allAppPagePaths = new Set<string>()
+      const allPagesPagePaths = new Set<string>()
+      const allAppLayoutPaths = new Set<string>()
 
       let envChange = false
       let tsconfigChange = false
@@ -552,6 +576,19 @@ async function startWatcher(
         // Collect all current filenames for the TS plugin to use
         devPageFiles.add(fileName)
 
+        const relativePath = path.relative(dir, fileName)
+
+        // Collect ALL file paths for validator.ts (before any filtering)
+        if (opts.nextConfig.experimental.typedRoutes) {
+          if (isAppPath && layoutFileRegex.test(fileName)) {
+            allAppLayoutPaths.add(relativePath)
+          } else if (isAppPath && validFileMatcher.isAppRouterPage(fileName)) {
+            allAppPagePaths.add(relativePath)
+          } else if (!isAppPath && validFileMatcher.isPageFile(fileName)) {
+            allPagesPagePaths.add(relativePath)
+          }
+        }
+
         let pageName = absolutePathToPage(fileName, {
           dir: isAppPath ? appDir! : pagesDir!,
           extensions: nextConfig.pageExtensions,
@@ -650,6 +687,7 @@ async function startWatcher(
             continue
           }
         } else {
+          // pages directory
           if (useFileSystemPublicRoutes) {
             pageFiles.add(pageName)
             // always add to nextDataRoutes for now but in future only add
@@ -1068,11 +1106,20 @@ async function startWatcher(
           layoutSlots,
           redirects: opts.fsChecker.redirects,
           rewrites: opts.fsChecker.rewrites,
+          allAppPagePaths,
+          allPagesPagePaths,
+          allAppLayoutPaths,
         })
 
         await fs.promises.writeFile(
           routeTypesFilePath,
           generateRouteTypesFile(newRouteTypesManifest)
+        )
+
+        // Generate validator file
+        await fs.promises.writeFile(
+          validatorFilePath,
+          generateValidatorFile(newRouteTypesManifest)
         )
 
         if (!resolved) {
