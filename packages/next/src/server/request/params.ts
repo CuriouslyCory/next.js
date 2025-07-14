@@ -4,14 +4,12 @@ import type { FallbackRouteParams } from './fallback-params'
 import { ReflectAdapter } from '../web/spec-extension/adapters/reflect'
 import {
   throwToInterruptStaticGeneration,
-  postponeWithTracking,
   trackSynchronousRequestDataAccessInDev,
 } from '../app-render/dynamic-rendering'
 
 import {
   workUnitAsyncStorage,
   type PrerenderStore,
-  type PrerenderStorePPR,
   type PrerenderStoreLegacy,
   type PrerenderStoreModern,
 } from '../app-render/work-unit-async-storage.external'
@@ -65,7 +63,6 @@ export function createParamsFromClient(
     switch (workUnitStore.type) {
       case 'prerender':
       case 'prerender-client':
-      case 'prerender-ppr':
       case 'prerender-legacy':
         return createPrerenderParams(underlyingParams, workStore, workUnitStore)
       case 'cache':
@@ -97,7 +94,6 @@ export function createServerParamsForRoute(
     switch (workUnitStore.type) {
       case 'prerender':
       case 'prerender-client':
-      case 'prerender-ppr':
       case 'prerender-legacy':
         return createPrerenderParams(underlyingParams, workStore, workUnitStore)
       case 'cache':
@@ -124,7 +120,6 @@ export function createServerParamsForServerSegment(
     switch (workUnitStore.type) {
       case 'prerender':
       case 'prerender-client':
-      case 'prerender-ppr':
       case 'prerender-legacy':
         return createPrerenderParams(underlyingParams, workStore, workUnitStore)
       case 'cache':
@@ -170,7 +165,6 @@ export function createPrerenderParamsForClientSegment(
         throw new InvariantError(
           'createPrerenderParamsForClientSegment should not be called in cache contexts.'
         )
-      case 'prerender-ppr':
       case 'prerender-legacy':
       case 'request':
         break
@@ -206,7 +200,6 @@ function createPrerenderParams(
         case 'prerender-client':
           // We are in a cacheComponents prerender
           return makeHangingParams(underlyingParams, prerenderStore)
-        case 'prerender-ppr':
         case 'prerender-legacy':
           return makeErroringExoticParams(
             underlyingParams,
@@ -302,7 +295,7 @@ function makeErroringExoticParams(
   underlyingParams: Params,
   fallbackParams: FallbackRouteParams,
   workStore: WorkStore,
-  prerenderStore: PrerenderStorePPR | PrerenderStoreLegacy
+  prerenderStore: PrerenderStoreLegacy
 ): Promise<Params> {
   const cachedParams = CachedParams.get(underlyingParams)
   if (cachedParams) {
@@ -330,23 +323,13 @@ function makeErroringExoticParams(
             // for params is only dynamic when we're generating a fallback shell
             // and even when `dynamic = "error"` we still support generating dynamic
             // fallback shells
-            // TODO remove this comment when cacheComponents is the default since there
-            // will be no `dynamic = "error"`
-            if (prerenderStore.type === 'prerender-ppr') {
-              // PPR Prerender (no cacheComponents)
-              postponeWithTracking(
-                workStore.route,
-                expression,
-                prerenderStore.dynamicTracking
-              )
-            } else {
-              // Legacy Prerender
-              throwToInterruptStaticGeneration(
-                expression,
-                workStore,
-                prerenderStore
-              )
-            }
+
+            // Legacy Prerender
+            throwToInterruptStaticGeneration(
+              expression,
+              workStore,
+              prerenderStore
+            )
           },
           enumerable: true,
         })
@@ -359,21 +342,11 @@ function makeErroringExoticParams(
             // fallback shells
             // TODO remove this comment when cacheComponents is the default since there
             // will be no `dynamic = "error"`
-            if (prerenderStore.type === 'prerender-ppr') {
-              // PPR Prerender (no cacheComponents)
-              postponeWithTracking(
-                workStore.route,
-                expression,
-                prerenderStore.dynamicTracking
-              )
-            } else {
-              // Legacy Prerender
-              throwToInterruptStaticGeneration(
-                expression,
-                workStore,
-                prerenderStore
-              )
-            }
+            throwToInterruptStaticGeneration(
+              expression,
+              workStore,
+              prerenderStore
+            )
           },
           set(newValue) {
             Object.defineProperty(promise, prop, {
@@ -568,7 +541,6 @@ function syncIODev(
         break
       case 'prerender':
       case 'prerender-client':
-      case 'prerender-ppr':
       case 'prerender-legacy':
       case 'cache':
       case 'private-cache':
