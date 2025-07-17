@@ -161,10 +161,15 @@ export type RouteCacheEntry =
   | FulfilledRouteCacheEntry
   | RejectedRouteCacheEntry
 
+// Deliberately ordered so we can easily compare two segments
+// and determine if one segment is "more specific" than another
+// (i.e. if it contains more data and shouldn't be fetched/replaced)
 export const enum FetchStrategy {
-  PPR,
-  Full,
-  LoadingBoundary,
+  // TODO: what can LoadingBoundary be compared against in practice?
+  LoadingBoundary = 0,
+  PPR = 1,
+  PPRDynamic = 2,
+  Full = 3,
 }
 
 type SegmentCacheEntryShared = {
@@ -411,7 +416,7 @@ export function getSegmentKeypathForTask(
   // If we're fetching using PPR, we do not need to include the search params in
   // the cache key, because the search params are treated as dynamic data. The
   // cache entry is valid for all possible search param values.
-  const isDynamicTask = task.includeDynamicData || !route.isPPREnabled
+  const isDynamicTask = task.includeDynamicData !== null || !route.isPPREnabled
   return isDynamicTask && path.endsWith('/' + PAGE_SEGMENT_KEY)
     ? [path, task.key.search]
     : [path]
@@ -630,8 +635,15 @@ export function upsertSegmentEntry(
   // this function and confirming it's the same as `existingEntry`.
   const existingEntry = readExactSegmentCacheEntry(now, keypath)
   if (existingEntry !== null) {
-    if (candidateEntry.isPartial && !existingEntry.isPartial) {
-      // Don't replace a full segment with a partial one. A case where this
+    if (
+      isFetchStrategyLessSpecific(
+        candidateEntry.fetchStrategy,
+        existingEntry.fetchStrategy
+      ) ||
+      // TODO: can this be true if `candidateEntry.fetchStrategy >= existingEntry.fetchStrategy`?
+      (candidateEntry.isPartial && !existingEntry.isPartial)
+    ) {
+      // Don't replace a more specific segment with a less-specific one. A case where this
       // might happen is if the existing segment was fetched via
       // <Link prefetch={true}>.
 
@@ -658,13 +670,14 @@ export function upsertSegmentEntry(
 }
 
 export function createDetachedSegmentCacheEntry(
-  staleAt: number
+  staleAt: number,
+  // Default to assuming the fetch strategy will be PPR. This will be updated
+  // when a fetch is actually initiated.
+  fetchStrategy = FetchStrategy.PPR
 ): EmptySegmentCacheEntry {
   const emptyEntry: EmptySegmentCacheEntry = {
     status: EntryStatus.Empty,
-    // Default to assuming the fetch strategy will be PPR. This will be updated
-    // when a fetch is actually initiated.
-    fetchStrategy: FetchStrategy.PPR,
+    fetchStrategy,
     revalidating: null,
     rsc: null,
     loading: null,
@@ -1174,6 +1187,7 @@ export async function fetchRouteOnCacheMiss(
       writeDynamicTreeResponseIntoCache(
         Date.now(),
         task,
+        FetchStrategy.LoadingBoundary, // This is not a PPR page
         response,
         serverData,
         entry,
@@ -1335,7 +1349,10 @@ export async function fetchSegmentOnCacheMiss(
 export async function fetchSegmentPrefetchesUsingDynamicRequest(
   task: PrefetchTask,
   route: FulfilledRouteCacheEntry,
-  fetchStrategy: FetchStrategy,
+  fetchStrategy:
+    | FetchStrategy.LoadingBoundary
+    | FetchStrategy.PPRDynamic
+    | FetchStrategy.Full,
   dynamicRequestTree: FlightRouterState,
   spawnedEntries: Map<string, PendingSegmentCacheEntry>
 ): Promise<PrefetchSubtaskResult<null> | null> {
@@ -1350,13 +1367,28 @@ export async function fetchSegmentPrefetchesUsingDynamicRequest(
   if (nextUrl !== null) {
     headers[NEXT_URL] = nextUrl
   }
-  // Only set the prefetch header if we're not doing a "full" prefetch. We
-  // omit the prefetch header from a full prefetch because it's essentially
-  // just a navigation request that happens ahead of time — it should include
-  // all the same data in the response.
-  if (fetchStrategy !== FetchStrategy.Full) {
-    headers[NEXT_ROUTER_PREFETCH_HEADER] = '1'
+  switch (fetchStrategy) {
+    case FetchStrategy.Full: {
+      // We omit the prefetch header from a full prefetch because it's essentially
+      // just a navigation request that happens ahead of time — it should include
+      // all the same data in the response.
+      break
+    }
+    case FetchStrategy.PPRDynamic: {
+      // In the future, this value will encode which dynamic things should be included.
+      // For now, just use something distinct from the default '1'.
+      headers[NEXT_ROUTER_PREFETCH_HEADER] = '2'
+      break
+    }
+    case FetchStrategy.LoadingBoundary: {
+      headers[NEXT_ROUTER_PREFETCH_HEADER] = '1'
+      break
+    }
+    default: {
+      fetchStrategy satisfies never
+    }
   }
+
   try {
     const response = await fetchPrefetchResponse(url, headers)
     if (!response || !response.ok || !response.body) {
@@ -1392,9 +1424,13 @@ export async function fetchSegmentPrefetchesUsingDynamicRequest(
       prefetchStream
     ) as Promise<NavigationFlightResponse>)
 
-    // Since we did not set the prefetch header, the response from the server
-    // will never contain dynamic holes.
-    const isResponsePartial = false
+    const isResponsePartial =
+      fetchStrategy === FetchStrategy.PPRDynamic
+        ? // A dynamic prefetch may have holes.
+          !!response.headers.get(NEXT_DID_POSTPONE_HEADER)
+        : // Full and LoadingBoundary prefetches cannot have holes.
+          // (even if we did set the prefetch header, we only use this codepath for non-PPR-enabled routes)
+          false
 
     // Aside from writing the data into the cache, this function also returns
     // the entries that were fulfilled, so we can streamingly update their sizes
@@ -1402,6 +1438,7 @@ export async function fetchSegmentPrefetchesUsingDynamicRequest(
     fulfilledEntries = writeDynamicRenderResponseIntoCache(
       Date.now(),
       task,
+      fetchStrategy,
       response,
       serverData,
       isResponsePartial,
@@ -1421,6 +1458,7 @@ export async function fetchSegmentPrefetchesUsingDynamicRequest(
 function writeDynamicTreeResponseIntoCache(
   now: number,
   task: PrefetchTask,
+  fetchStrategy: FetchStrategy,
   response: RSCResponse,
   serverData: NavigationFlightResponse,
   entry: PendingRouteCacheEntry,
@@ -1485,6 +1523,7 @@ function writeDynamicTreeResponseIntoCache(
   writeDynamicRenderResponseIntoCache(
     now,
     task,
+    fetchStrategy,
     response,
     serverData,
     isResponsePartial,
@@ -1511,6 +1550,7 @@ function rejectSegmentEntriesIfStillPending(
 function writeDynamicRenderResponseIntoCache(
   now: number,
   task: PrefetchTask,
+  fetchStrategy: FetchStrategy,
   response: RSCResponse,
   serverData: NavigationFlightResponse,
   isResponsePartial: boolean,
@@ -1569,6 +1609,7 @@ function writeDynamicRenderResponseIntoCache(
       writeSeedDataIntoCache(
         now,
         task,
+        fetchStrategy,
         route,
         staleAt,
         seedData,
@@ -1617,6 +1658,7 @@ function writeDynamicRenderResponseIntoCache(
 function writeSeedDataIntoCache(
   now: number,
   task: PrefetchTask,
+  fetchStrategy: FetchStrategy,
   route: FulfilledRouteCacheEntry,
   staleAt: number,
   seedData: CacheNodeSeedData,
@@ -1658,7 +1700,7 @@ function writeSeedDataIntoCache(
       // There was already an entry in the cache. But we may be able to
       // replace it with the new one from the server.
       const newEntry = fulfillSegmentCacheEntry(
-        createDetachedSegmentCacheEntry(staleAt),
+        createDetachedSegmentCacheEntry(staleAt, fetchStrategy),
         rsc,
         loading,
         staleAt,
@@ -1681,6 +1723,7 @@ function writeSeedDataIntoCache(
         writeSeedDataIntoCache(
           now,
           task,
+          fetchStrategy,
           route,
           staleAt,
           childSeedData,
@@ -1799,4 +1842,11 @@ function createPromiseWithResolvers<T>(): PromiseWithResolvers<T> {
     reject = rej
   })
   return { resolve: resolve!, reject: reject!, promise }
+}
+
+export function isFetchStrategyLessSpecific(
+  currentStrategy: FetchStrategy,
+  newStrategy: FetchStrategy
+): boolean {
+  return currentStrategy < newStrategy
 }
