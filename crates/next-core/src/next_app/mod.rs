@@ -293,6 +293,18 @@ impl AppPage {
         )
     }
 
+    /// Returns true if the last segment is a group and there are no previous groups.
+    pub fn is_top_level_group(&self) -> bool {
+        if matches!(self.0.last(), Some(PageSegment::Group(_))) {
+            // If we find a previous group, we know this is not a top-level group.
+            return !self.0[..self.0.len() - 1]
+                .iter()
+                .any(|segment| matches!(segment, PageSegment::Group(_)));
+        }
+
+        false
+    }
+
     pub fn complete(&self, page_type: PageType) -> Result<Self> {
         self.clone_push(PageSegment::PageType(page_type))
     }

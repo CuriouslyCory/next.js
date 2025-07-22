@@ -872,20 +872,36 @@ async fn directory_tree_to_loader_tree(
 ///   set.
 /// * `file_path` - The file path to the default page if neither the current module nor the parent
 ///   module is set.
+/// * `always_override` - If true, the module will always be overridden, and if neither are set, the
+///   module and the parent module will be set to the default page. If false, the module will only
+///   be overridden if it is not set.
 async fn check_and_update_module_references(
     app_dir: FileSystemPath,
     module: &mut Option<FileSystemPath>,
     parent_module: &mut Option<FileSystemPath>,
     file_path: &str,
+    always_override: bool,
 ) -> Result<()> {
-    match (module.as_mut(), parent_module.as_mut()) {
-        (Some(module), _) => *parent_module = Some(module.clone()),
-        (None, Some(parent_module)) => *module = Some(parent_module.clone()),
-        (None, None) => {
-            let default_page = get_next_package(app_dir.clone()).await?.join(file_path)?;
+    let override_with_default = async |module: &mut Option<FileSystemPath>,
+                                       parent_module: &mut Option<FileSystemPath>|
+           -> Result<()> {
+        let default_page = get_next_package(app_dir.clone()).await?.join(file_path)?;
+        *module = Some(default_page.clone());
+        *parent_module = Some(default_page);
+        Ok(())
+    };
 
-            *module = Some(default_page.clone());
-            *parent_module = Some(default_page);
+    if always_override {
+        match (module.as_mut(), parent_module.as_mut()) {
+            (Some(module), _) => *parent_module = Some(module.clone()),
+            (None, Some(parent_module)) => *module = Some(parent_module.clone()),
+            (None, None) => override_with_default(module, parent_module).await?,
+        }
+    } else {
+        match (module.as_mut(), parent_module.as_mut()) {
+            (Some(module), _) => *parent_module = Some(module.clone()),
+            (None, None) => override_with_default(module, parent_module).await?,
+            _ => {}
         }
     }
 
@@ -921,11 +937,15 @@ async fn directory_tree_to_loader_tree_internal(
     let is_root_layout = app_path.is_root() && modules.layout.is_some();
 
     if is_root_directory || is_root_layout {
+        // There are some files like not-found that should always be overridden for top level groups
+        let is_top_level_group = app_page.is_top_level_group();
+
         check_and_update_module_references(
             app_dir.clone(),
             &mut modules.not_found,
             &mut parent_modules.not_found,
             "dist/client/components/builtin/not-found.js",
+            is_top_level_group,
         )
         .await?;
 
@@ -934,6 +954,7 @@ async fn directory_tree_to_loader_tree_internal(
             &mut modules.forbidden,
             &mut parent_modules.forbidden,
             "dist/client/components/builtin/forbidden.js",
+            is_top_level_group,
         )
         .await?;
 
@@ -942,14 +963,17 @@ async fn directory_tree_to_loader_tree_internal(
             &mut modules.unauthorized,
             &mut parent_modules.unauthorized,
             "dist/client/components/builtin/unauthorized.js",
+            is_top_level_group,
         )
         .await?;
 
+        // We don't want to force override the global error page for top level groups
         check_and_update_module_references(
             app_dir.clone(),
             &mut modules.global_error,
             &mut parent_modules.global_error,
             "dist/client/components/builtin/global-error.js",
+            false,
         )
         .await?;
     }
