@@ -1427,7 +1427,7 @@ async fn directory_tree_to_entrypoints_internal_untraced(
                         modules: AppDirModules {
                             page: Some(get_next_package(app_dir.clone())
                                 .await?
-                                .join("dist/client/components/empty-error.js".into())?),
+                                .join("dist/client/components/builtin/empty-error.js")?),
                             ..Default::default()
                         },
                         global_metadata,
