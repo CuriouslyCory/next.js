@@ -109,7 +109,7 @@ impl EcmascriptBrowserChunkContent {
         writedoc!(
             code,
             r#"
-                (globalThis.TURBOPACK = globalThis.TURBOPACK || []).push([{script_or_path}, {{
+                (globalThis.TURBOPACK ||= []).push([{script_or_path},
             "#
         )?;
 
@@ -117,13 +117,12 @@ impl EcmascriptBrowserChunkContent {
         let chunk_items = content.chunk_item_code_and_ids().await?;
         for item in chunk_items {
             for (id, item_code) in item {
-                write!(code, "\n{}: ", StringifyJs(&id))?;
                 code.push_code(item_code);
-                write!(code, ",")?;
+                write!(code, ", {},", StringifyJs(&id))?;
             }
         }
 
-        write!(code, "\n}}]);")?;
+        write!(code, "\n]);")?;
 
         let mut code = code.build();
 

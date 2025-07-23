@@ -1,6 +1,5 @@
-(globalThis.TURBOPACK = globalThis.TURBOPACK || []).push(["output/b1abf_turbopack-tests_tests_snapshot_basic_top-level-await_input_UserAPI_182540dd.js", {
-
-"[project]/turbopack/crates/turbopack-tests/tests/snapshot/basic/top-level-await/input/UserAPI.js [test] (ecmascript, async loader)": ((__turbopack_context__) => {
+(globalThis.TURBOPACK ||= []).push(["output/b1abf_turbopack-tests_tests_snapshot_basic_top-level-await_input_UserAPI_182540dd.js",
+((__turbopack_context__) => {
 
 __turbopack_context__.v((parentImport) => {
     return Promise.all([
@@ -9,5 +8,5 @@ __turbopack_context__.v((parentImport) => {
         return parentImport("[project]/turbopack/crates/turbopack-tests/tests/snapshot/basic/top-level-await/input/UserAPI.js [test] (ecmascript)");
     });
 });
-}),
-}]);
+}), "[project]/turbopack/crates/turbopack-tests/tests/snapshot/basic/top-level-await/input/UserAPI.js [test] (ecmascript, async loader)",
+]);

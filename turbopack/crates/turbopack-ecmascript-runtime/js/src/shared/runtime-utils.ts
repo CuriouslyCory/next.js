@@ -403,6 +403,44 @@ function createPromise<T>() {
   }
 }
 
+// Load the CompressedmoduleFactories of a chunk into the `moduleFactories` Map.
+// The CompressedModuleFactories format is
+// - a module factory function
+// - 1 or more module ids
+// So walking this is a little complex but the flat structure is also fast to
+// traverse, we can use `typeof` operators to distinguish the two cases.
+function installCompressedModuleFactories(
+  chunkModules: CompressedModuleFactories,
+  offset: number,
+  moduleFactories: ModuleFactories,
+  newModuleId?: (id: ModuleId) => void
+) {
+  let i = offset
+  while (i < chunkModules.length) {
+    const moduleFactoryFn = chunkModules[i] as Function
+
+    let end = i + 1 // we are guaranteed at least one module id
+    // Find the next factory function (or the end)
+    while (
+      end < chunkModules.length &&
+      typeof chunkModules[end] !== 'function'
+    ) {
+      end++
+    }
+    // The primary module id comes last
+    let moduleId = chunkModules[end - 1] as ModuleId
+    if (!moduleFactories.has(moduleId)) {
+      newModuleId?.(moduleId)
+      for (; i < end; i++) {
+        let moduleId = chunkModules[i] as ModuleId
+        moduleFactories.set(moduleId, moduleFactoryFn)
+      }
+    } else {
+      i = end // end is pointing at the next factory or the end of the array
+    }
+  }
+}
+
 // everything below is adapted from webpack
 // https://github.com/webpack/webpack/blob/6be4065ade1e252c1d8dcba4af0f43e32af1bdc1/lib/runtime/AsyncModuleRuntimeModule.js#L13
 

@@ -1,12 +1,11 @@
-module.exports = {
+module.exports = [
 
-"[project]/turbopack/crates/turbopack-tests/tests/snapshot/basic/async_chunk_build/input/shared.js [test] (ecmascript)": ((__turbopack_context__) => {
+((__turbopack_context__) => {
 
 var { m: module, e: exports } = __turbopack_context__;
 {
 // shared package
-}}),
-"[project]/turbopack/crates/turbopack-tests/tests/snapshot/basic/async_chunk_build/input/index.js [test] (ecmascript)": ((__turbopack_context__) => {
+}}), "[project]/turbopack/crates/turbopack-tests/tests/snapshot/basic/async_chunk_build/input/shared.js [test] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
 __turbopack_context__.s({});
@@ -18,8 +17,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$turbopack$2f$crates$2f$turbo
 __turbopack_context__.A("[project]/turbopack/crates/turbopack-tests/tests/snapshot/basic/async_chunk_build/input/import.js [test] (ecmascript, async loader)").then(({ foo })=>{
     foo(true);
 });
-}),
-"[project]/turbopack/crates/turbopack-tests/tests/snapshot/basic/async_chunk_build/input/node_modules/bar/index.js [test] (ecmascript)": ((__turbopack_context__) => {
+}), "[project]/turbopack/crates/turbopack-tests/tests/snapshot/basic/async_chunk_build/input/index.js [test] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
 __turbopack_context__.s({
@@ -28,8 +26,7 @@ __turbopack_context__.s({
 function bar(value) {
     console.assert(value);
 }
-}),
-
-};
+}), "[project]/turbopack/crates/turbopack-tests/tests/snapshot/basic/async_chunk_build/input/node_modules/bar/index.js [test] (ecmascript)", 
+];
 
 //# sourceMappingURL=4e721_crates_turbopack-tests_tests_snapshot_basic_async_chunk_build_input_1e41378a._.js.map

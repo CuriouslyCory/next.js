@@ -58,7 +58,7 @@ impl EcmascriptBuildNodeChunkContent {
         writedoc!(
             code,
             r#"
-                module.exports = {{
+                module.exports = [
 
             "#,
         )?;
@@ -67,13 +67,12 @@ impl EcmascriptBuildNodeChunkContent {
         let chunk_items = content.chunk_item_code_and_ids().await?;
         for item in chunk_items {
             for (id, item_code) in item {
-                write!(code, "{}: ", StringifyJs(&id))?;
                 code.push_code(item_code);
-                writeln!(code, ",")?;
+                write!(code, ", {}, ", StringifyJs(&id))?;
             }
         }
 
-        write!(code, "\n}};")?;
+        write!(code, "\n];")?;
 
         let mut code = code.build();
 

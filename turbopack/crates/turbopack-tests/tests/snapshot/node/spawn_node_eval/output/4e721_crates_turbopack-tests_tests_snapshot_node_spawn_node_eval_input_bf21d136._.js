@@ -1,6 +1,5 @@
-(globalThis.TURBOPACK = globalThis.TURBOPACK || []).push(["output/4e721_crates_turbopack-tests_tests_snapshot_node_spawn_node_eval_input_bf21d136._.js", {
-
-"[project]/turbopack/crates/turbopack-tests/tests/snapshot/node/spawn_node_eval/input/index.js [test] (ecmascript)": ((__turbopack_context__) => {
+(globalThis.TURBOPACK ||= []).push(["output/4e721_crates_turbopack-tests_tests_snapshot_node_spawn_node_eval_input_bf21d136._.js",
+((__turbopack_context__) => {
 "use strict";
 
 __turbopack_context__.s({});
@@ -10,8 +9,7 @@ let x = (0, __TURBOPACK__imported__module__$5b$project$5d2f$turbopack$2f$crates$
     '-e',
     "console.log('foo');"
 ]);
-}),
-"[project]/turbopack/crates/turbopack-tests/tests/snapshot/node/spawn_node_eval/input/node_modules/child_process/index.js [test] (ecmascript)": ((__turbopack_context__) => {
+}), "[project]/turbopack/crates/turbopack-tests/tests/snapshot/node/spawn_node_eval/input/index.js [test] (ecmascript)",((__turbopack_context__) => {
 "use strict";
 
 __turbopack_context__.s({
@@ -20,7 +18,7 @@ __turbopack_context__.s({
 function spawn(cmd, args) {
 //
 }
-}),
-}]);
+}), "[project]/turbopack/crates/turbopack-tests/tests/snapshot/node/spawn_node_eval/input/node_modules/child_process/index.js [test] (ecmascript)",
+]);
 
 //# sourceMappingURL=4e721_crates_turbopack-tests_tests_snapshot_node_spawn_node_eval_input_bf21d136._.js.map

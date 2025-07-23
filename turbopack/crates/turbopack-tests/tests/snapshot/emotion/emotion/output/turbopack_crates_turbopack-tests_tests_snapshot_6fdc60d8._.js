@@ -1,6 +1,5 @@
-(globalThis.TURBOPACK = globalThis.TURBOPACK || []).push(["output/turbopack_crates_turbopack-tests_tests_snapshot_6fdc60d8._.js", {
-
-"[project]/turbopack/crates/turbopack-tests/tests/snapshot/emotion/emotion/input/index.js [test] (ecmascript)": ((__turbopack_context__) => {
+(globalThis.TURBOPACK ||= []).push(["output/turbopack_crates_turbopack-tests_tests_snapshot_6fdc60d8._.js",
+((__turbopack_context__) => {
 "use strict";
 
 /** @jsxImportSource @emotion/react */ __turbopack_context__.s({});
@@ -26,8 +25,7 @@ function ClassNameButton({ children }) {
     }, this);
 }
 console.log(StyledButton, ClassNameButton);
-}),
-"[project]/turbopack/crates/turbopack-tests/tests/snapshot/node_modules/@emotion/react/jsx-dev-runtime.js [test] (ecmascript)": ((__turbopack_context__) => {
+}), "[project]/turbopack/crates/turbopack-tests/tests/snapshot/emotion/emotion/input/index.js [test] (ecmascript)",((__turbopack_context__) => {
 "use strict";
 
 __turbopack_context__.s({
@@ -36,8 +34,7 @@ __turbopack_context__.s({
 function jsxDEV() {
     return 'purposefully empty stub for @emotion/react/jsx-dev-runtime.js';
 }
-}),
-"[project]/turbopack/crates/turbopack-tests/tests/snapshot/node_modules/@emotion/react/index.js [test] (ecmascript)": ((__turbopack_context__) => {
+}), "[project]/turbopack/crates/turbopack-tests/tests/snapshot/node_modules/@emotion/react/jsx-dev-runtime.js [test] (ecmascript)",((__turbopack_context__) => {
 "use strict";
 
 __turbopack_context__.s({
@@ -46,14 +43,13 @@ __turbopack_context__.s({
 function jsx() {
     return 'purposefully empty stub for @emotion/react/index.js';
 }
-}),
-"[project]/turbopack/crates/turbopack-tests/tests/snapshot/node_modules/@emotion/styled/index.js [test] (ecmascript)": ((__turbopack_context__) => {
+}), "[project]/turbopack/crates/turbopack-tests/tests/snapshot/node_modules/@emotion/react/index.js [test] (ecmascript)",((__turbopack_context__) => {
 
 var { m: module, e: exports } = __turbopack_context__;
 {
 "purposefully empty stub";
 "@emtion/styled/index.js";
-}}),
-}]);
+}}), "[project]/turbopack/crates/turbopack-tests/tests/snapshot/node_modules/@emotion/styled/index.js [test] (ecmascript)",
+]);
 
 //# sourceMappingURL=turbopack_crates_turbopack-tests_tests_snapshot_6fdc60d8._.js.map
