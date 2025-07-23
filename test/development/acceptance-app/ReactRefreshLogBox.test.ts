@@ -93,13 +93,13 @@ describe('ReactRefreshLogBox app', () => {
          "description": "no",
          "environmentLabel": null,
          "label": "Runtime Error",
-         "source": "index.js (3:7) @ Module.
+         "source": "index.js (3:7) @
        {module evaluation}
        > 3 | throw new Error('no')
            |       ^",
          "stack": [
-           "Module. {module evaluation} index.js (3:7)",
-           "Module. {module evaluation} app/page.js (2:1)",
+           "{module evaluation} index.js (3:7)",
+           "{module evaluation} app/page.js (2:1)",
          ],
        }
       `)
@@ -1571,13 +1571,13 @@ export default function Home() {
          "description": "utils error",
          "environmentLabel": null,
          "label": "Runtime Error",
-         "source": "app/utils.ts (1:7) @ Module.
+         "source": "app/utils.ts (1:7) @
        {module evaluation}
        > 1 | throw new Error('utils error')
            |       ^",
          "stack": [
-           "Module. {module evaluation} app/utils.ts (1:7)",
-           "Module. {module evaluation} app/page.js (2:1)",
+           "{module evaluation} app/utils.ts (1:7)",
+           "{module evaluation} app/page.js (2:1)",
          ],
        }
       `)
