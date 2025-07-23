@@ -3,7 +3,7 @@ use rustc_hash::FxHashSet;
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value as JsonValue;
 use turbo_esregex::EsRegex;
-use turbo_rcstr::RcStr;
+use turbo_rcstr::{RcStr, rcstr};
 use turbo_tasks::{
     FxIndexMap, NonLocalValue, OperationValue, ResolvedVc, TaskInput, Vc, debug::ValueDebugFormat,
     trace::TraceRawVcs,
@@ -1167,10 +1167,10 @@ impl Issue for InvalidLoaderRuleError {
                 .into(),
             ),
             StyledString::Text(
-                "Check out the documentation here for more information:".into(),
+                rcstr!("Check out the documentation here for more information:"),
             ),
             StyledString::Text(
-                "https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#configuring-webpack-loaders".into(),
+                rcstr!("https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#configuring-webpack-loaders"),
             ),
         ]).resolved_cell())))
     }

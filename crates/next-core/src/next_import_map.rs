@@ -132,14 +132,14 @@ pub async fn get_next_client_import_map(
             };
 
             import_map.insert_exact_alias(
-                "react",
+                rcstr!("react"),
                 request_to_import_mapping(
                     app_dir.clone(),
                     &format!("next/dist/compiled/react{react_flavor}"),
                 ),
             );
             import_map.insert_wildcard_alias(
-                "react/",
+                rcstr!("react/"),
                 request_to_import_mapping(
                     app_dir.clone(),
                     &format!("next/dist/compiled/react{react_flavor}/*"),

@@ -312,10 +312,10 @@ async fn run_test_operation(resource: RcStr) -> Result<Vc<FileSystemPath>> {
         .await?;
 
     let conditions = RuleCondition::any(vec![
-        RuleCondition::ResourcePathEndsWith(".js".into()),
-        RuleCondition::ResourcePathEndsWith(".jsx".into()),
-        RuleCondition::ResourcePathEndsWith(".ts".into()),
-        RuleCondition::ResourcePathEndsWith(".tsx".into()),
+        RuleCondition::ResourcePathEndsWith(rcstr!(".js")),
+        RuleCondition::ResourcePathEndsWith(rcstr!(".jsx")),
+        RuleCondition::ResourcePathEndsWith(rcstr!(".ts")),
+        RuleCondition::ResourcePathEndsWith(rcstr!(".tsx")),
     ]);
 
     let module_rules = ModuleRule::new(
@@ -347,7 +347,7 @@ async fn run_test_operation(resource: RcStr) -> Result<Vc<FileSystemPath>> {
             },
             environment: Some(env),
             rules: vec![(
-                ContextCondition::InDirectory("node_modules".into()),
+                ContextCondition::InDirectory(rcstr!("node_modules")),
                 ModuleOptionsContext {
                     environment: Some(env),
                     tree_shaking_mode: options.tree_shaking_mode,
@@ -366,7 +366,7 @@ async fn run_test_operation(resource: RcStr) -> Result<Vc<FileSystemPath>> {
             enable_node_modules: Some(project_root.clone()),
             custom_conditions: vec![rcstr!("development")],
             rules: vec![(
-                ContextCondition::InDirectory("node_modules".into()),
+                ContextCondition::InDirectory(rcstr!("node_modules")),
                 ResolveOptionsContext {
                     enable_node_modules: Some(project_root.clone()),
                     custom_conditions: vec![rcstr!("development")],

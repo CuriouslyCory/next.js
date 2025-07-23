@@ -2,7 +2,7 @@ use anyhow::Result;
 use rustc_hash::FxHashSet;
 use serde::Serialize;
 use tracing::{Level, instrument};
-use turbo_rcstr::RcStr;
+use turbo_rcstr::{RcStr, rcstr};
 use turbo_tasks::{
     FxIndexMap, FxIndexSet, ResolvedVc, TryJoinIterExt, ValueToString, Vc, fxindexmap,
 };
@@ -132,7 +132,7 @@ where
         }
 
         assets.push(WebpackStatsAsset {
-            ty: "asset".into(),
+            ty: rcstr!("asset"),
             name: path.clone(),
             chunk_names: vec![path],
             size: asset_len,
@@ -191,7 +191,7 @@ where
     })
 }
 
-fn normalize_client_path(path: &str) -> String {
+fn normalize_client_path(path: &str) -> RcStr {
     let next_re = regex::Regex::new(r"^_next/").unwrap();
     next_re.replace(path, ".next/").into()
 }
