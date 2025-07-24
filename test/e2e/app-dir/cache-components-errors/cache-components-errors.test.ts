@@ -2425,12 +2425,11 @@ describe('Cache Components Errors', () => {
                  "description": ""use cache: private" must not be used within \`unstable_cache()\`.",
                  "environmentLabel": null,
                  "label": "Runtime Error",
-                 "source": "app/use-cache-private-in-unstable-cache/page.tsx (21:38) @ Module.
-               {module evaluation}
+                 "source": "app/use-cache-private-in-unstable-cache/page.tsx (21:38)
                > 21 | const getCachedData = unstable_cache(async () => {
                     |                                      ^",
                  "stack": [
-                   "Module. {module evaluation} app/use-cache-private-in-unstable-cache/page.tsx (21:38)",
+                   "app/use-cache-private-in-unstable-cache/page.tsx (21:38)",
                    "<FIXME-file-protocol>",
                    "<FIXME-file-protocol>",
                    "<FIXME-next-dist-dir>",
@@ -2447,7 +2446,7 @@ describe('Cache Components Errors', () => {
                > 21 | const getCachedData = unstable_cache(async () => {
                     |                                      ^",
                  "stack": [
-                   "eval app/use-cache-private-in-unstable-cache/page.tsx (21:38)",
+                   "app/use-cache-private-in-unstable-cache/page.tsx (21:38)",
                    "<FIXME-next-dist-dir>",
                    "<FIXME-next-dist-dir>",
                  ],
@@ -2463,7 +2462,7 @@ describe('Cache Components Errors', () => {
                > 21 | const getCachedData = unstable_cache(async () => {
                     |                                      ^",
                  "stack": [
-                   "eval app/use-cache-private-in-unstable-cache/page.tsx (21:38)",
+                   "app/use-cache-private-in-unstable-cache/page.tsx (21:38)",
                    "<FIXME-next-dist-dir>",
                  ],
                }
@@ -2574,7 +2573,7 @@ describe('Cache Components Errors', () => {
                > 15 | async function Private() {
                     | ^",
                  "stack": [
-                   "Module. {module evaluation} app/use-cache-private-in-use-cache/page.tsx (15:1)",
+                   "app/use-cache-private-in-use-cache/page.tsx (15:1)",
                    "<FIXME-file-protocol>",
                    "<FIXME-file-protocol>",
                    "<FIXME-next-dist-dir>",
@@ -2591,7 +2590,7 @@ describe('Cache Components Errors', () => {
                > 15 | async function Private() {
                     | ^",
                  "stack": [
-                   "eval app/use-cache-private-in-use-cache/page.tsx (15:1)",
+                   "app/use-cache-private-in-use-cache/page.tsx (15:1)",
                    "<FIXME-next-dist-dir>",
                    "<FIXME-next-dist-dir>",
                  ],
@@ -2607,7 +2606,7 @@ describe('Cache Components Errors', () => {
                > 15 | async function Private() {
                     | ^",
                  "stack": [
-                   "eval app/use-cache-private-in-use-cache/page.tsx (15:1)",
+                   "app/use-cache-private-in-use-cache/page.tsx (15:1)",
                    "<FIXME-next-dist-dir>",
                  ],
                }
