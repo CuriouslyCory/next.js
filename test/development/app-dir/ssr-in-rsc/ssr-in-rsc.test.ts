@@ -800,12 +800,12 @@ describe('react-dom/server in React Server environment', () => {
             "description": "Cannot read properties of undefined (reading 'ReactCurrentDispatcher')",
             "source": "internal-pkg/server.node.js (1:1) @ Object.{module evaluation}
 
-          > 1 | import * as ReactDOMServerEdge from 'react-dom/server.node'
-              | ^
-            2 | // Fine to drop once React is on ESM
-            3 | import ReactDOMServerEdgeDefault from 'react-dom/server.node'
-            4 |",
-          }
+           > 1 | import * as ReactDOMServerEdge from 'react-dom/server.node'
+               | ^
+             2 | // Fine to drop once React is on ESM
+             3 | import ReactDOMServerEdgeDefault from 'react-dom/server.node'
+             4 |",
+           }
         `)
       } else {
         expect(redbox).toMatchInlineSnapshot(`
@@ -814,12 +814,12 @@ describe('react-dom/server in React Server environment', () => {
             "source": "internal-pkg/server.node.js (1:1) @ Module.
           {module evaluation}
 
-         > 1 | import * as ReactDOMServerEdge from 'react-dom/server.node'
-             | ^
-           2 | // Fine to drop once React is on ESM
-           3 | import ReactDOMServerEdgeDefault from 'react-dom/server.node'
-           4 |",
-         }
+          > 1 | import * as ReactDOMServerEdge from 'react-dom/server.node'
+              | ^
+            2 | // Fine to drop once React is on ESM
+            3 | import ReactDOMServerEdgeDefault from 'react-dom/server.node'
+            4 |",
+          }
         `)
       }
     } else {
